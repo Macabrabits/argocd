@@ -1,0 +1,10 @@
+project: default
+source:
+  repoURL: 'git@github.com:Macabrabits/argocd.git'
+  path: helmchart
+  targetRevision: HEAD
+destination:
+  server: 'https://kubernetes.default.svc'
+  namespace: default
+syncPolicy:
+  automated: {}

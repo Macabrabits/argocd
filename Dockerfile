@@ -1,6 +1,9 @@
 ARG NODE_VERSION=20.0.0
 ARG NPM_VERSION=9.6.7
 
+###########################################################################
+###########################################################################
+
 FROM docker.io/node:${NODE_VERSION} AS base
 ARG NPM_VERSION
 ENV NPM_VERSION ${NPM_VERSION}
@@ -26,6 +29,9 @@ COPY --chown=node:node package.json package-lock.json* ./
 ENTRYPOINT ["/usr/bin/tini", "--"]
 EXPOSE 3000
 
+###########################################################################
+###########################################################################
+
 FROM base AS development
 ENV NODE_ENV=development
 # Install ps util for nodemon hot reload
@@ -36,18 +42,27 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 USER node
 CMD [ "/bin/sh", "-c", "[ ! -d node_modules ] && npm install --legacy-peer-deps ; npm run start:dev" ]
 
+###########################################################################
+###########################################################################
+
 FROM base AS node_builder
 # Install production only dependencies
 # npm ci is used for creating reproducible environments
-RUN npm ci --production --legacy-peer-deps
+RUN npm ci --production
+
+###########################################################################
+###########################################################################
 
 FROM node_builder AS nest_builder
 # Install devDependencies
-RUN npm install --legacy-peer-deps
+RUN npm install
 # Copy source code to container
 COPY --chown=node:node . .
 # Build nest project
 RUN npm run build
+
+###########################################################################
+###########################################################################
 
 FROM nest_builder AS test
 CMD [ "npm", "run", "test:cov" ]
