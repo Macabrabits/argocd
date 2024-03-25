@@ -8,7 +8,7 @@ image:
   repository: macabrabits/argocd-test
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "14"
+  tag: "32"
 
 
 
