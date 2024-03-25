@@ -1,4 +1,4 @@
-ARG NODE_VERSION=20.0.0
+ARG NODE_VERSION=20.11.1
 ARG NPM_VERSION=9.6.7
 
 ###########################################################################
@@ -67,9 +67,10 @@ RUN npm run build
 FROM nest_builder AS test
 CMD [ "npm", "run", "test:cov" ]
 
-FROM base AS production
+FROM docker.io/node:${NODE_VERSION}-slim AS production
 ENV NODE_ENV=production
 COPY --from=node_builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=node_builder --chown=node:node /app/package.json /app/package-lock.json* ./
 COPY --from=nest_builder --chown=node:node /app/dist ./dist
 CMD [ "npm", "run", "start:prod" ]
 
