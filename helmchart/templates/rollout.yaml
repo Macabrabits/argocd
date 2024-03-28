@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "argocd.fullname" . }}
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      canaryService: {{ include "argocd.fullname" . }}-canary
+      stableService: {{ include "argocd.fullname" . }}-stable
+      trafficRouting:
+        istio:
+          virtualServices:
+          - name: {{ include "argocd.fullname" . }} # At least one virtualService is required
+      steps:      
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+      - setWeight: 100
+      - pause: {}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      {{- include "argocd.selectorLabels" .  | nindent 6}}
+  template:
+    metadata:
+      labels:
+        {{- include "argocd.selectorLabels" .  | nindent 8}}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http          
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}            

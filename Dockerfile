@@ -73,14 +73,3 @@ COPY --from=node_builder --chown=node:node /app/node_modules ./node_modules
 COPY --from=node_builder --chown=node:node /app/package.json /app/package-lock.json* ./
 COPY --from=nest_builder --chown=node:node /app/dist ./dist
 CMD [ "npm", "run", "start:prod" ]
-
-
-# Metadata
-# Runtime distribution variables for labels
-ARG BUILD_DATE
-ARG VCS_COMMIT_SHA
-ARG VCS_URL
-# OCI image specs
-LABEL br.com.altu.image.created=${BUILD_DATE} \
-    br.com.altu.image.revision=${VCS_COMMIT_SHA} \
-    br.com.altu.image.source=${VCS_URL}

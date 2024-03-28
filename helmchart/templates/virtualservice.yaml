@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "argocd.fullname" . }}
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - "argocdtest.com"
+  gateways:
+  - {{ include "argocd.fullname" . }}
+  http:
+  - route:
+    - destination:
+        host: argocd-stable
+        port:
+          number: 3000
+      weight: 100
+    - destination:
+        host: argocd-canary
+        port:
+          number: 3000
+      weight: 0

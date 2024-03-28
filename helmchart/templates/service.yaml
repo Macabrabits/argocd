@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "argocd.fullname" . }}
+  name: {{ include "argocd.fullname" . }}-stable
   labels:
     {{- include "argocd.labels" . | nindent 4 }}
 spec:
@@ -13,3 +13,19 @@ spec:
       name: http
   selector:
     {{- include "argocd.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "argocd.fullname" . }}-canary
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "argocd.selectorLabels" . | nindent 4 }}    
