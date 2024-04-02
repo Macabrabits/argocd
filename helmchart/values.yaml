@@ -2,13 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 0
+replicaCount: 4
 
 image:
   repository: macabrabits/argocd-test
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "37"
+  tag: "38"
 
 
 
@@ -107,3 +107,18 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+rollout:
+  steps: {}
+  # - setWeight: 50
+  # - pause: {duration: 2m}
+  # - analysis:
+  #     templates:
+  #       - templateName: argocd
+  #     args:
+  #     - name: service-name
+  #       value: "argocd-canary.default.svc.cluster.local"
+  # - setWeight: 100
+gateway:
+  hosts:
+  - "argocdtest.com"

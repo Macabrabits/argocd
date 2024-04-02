@@ -1,1 +1,0 @@
-macabrabits/argocd-test:blue macabrabits/argocd-test:blue macabrabits/argocd-test:blue macabrabits/argocd-test:blue

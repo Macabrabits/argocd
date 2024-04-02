@@ -17,4 +17,9 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "argocdtest.com"
+    {{- range .Values.gateway.hosts }}
+    - {{ . | quote }}
+    {{- end }}
+
+
+    

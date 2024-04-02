@@ -5,8 +5,8 @@ export class AppService {
   getHello(failPercentChance?:number): string {
     const random = Math.random()*100
     if(random < failPercentChance) 
-      throw new HttpException("Failed!", HttpStatus.BAD_REQUEST)
-    // return `Hello World! ${failPercentChance} ${random}`;
+      throw new HttpException("Failed!", HttpStatus.INTERNAL_SERVER_ERROR)
+    
     return `Hello World! Green!!`;
   }
   getInfo(){

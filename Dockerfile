@@ -1,3 +1,4 @@
+# https://courses.devopsdirective.com/docker-beginner-to-pro/lessons/06-building-container-images/02-api-node-dockerfile
 ARG NODE_VERSION=20.11.1
 ARG NPM_VERSION=9.6.7
 
@@ -10,7 +11,7 @@ ENV NPM_VERSION ${NPM_VERSION}
 RUN set -eu; \
     \
 # Install pinned version of npm, regardless of node version, for stability
-    npm install -g npm@${NPM_VERSION} ; \
+    npm install -g npm@${NPM_VERSION} @nestjs/cli  ; \
 # Install busybox for several Unix utilities
 # and tini to act as our simple init
     apt-get update && apt-get upgrade --no-install-recommends -y \
@@ -38,9 +39,11 @@ ENV NODE_ENV=development
 # https://github.com/remy/nodemon/issues/454#issuecomment-68740175
 USER root
 RUN apt-get update && apt-get install --no-install-recommends -y \
-        procps
+        procps \
+        && apt-get clean
 USER node
-CMD [ "/bin/sh", "-c", "[ ! -d node_modules ] && npm install --legacy-peer-deps ; npm run start:dev" ]
+CMD [ "/bin/sh", "-c", "[ ! -d node_modules ] && npm install --development ; npm run start:dev" ]
+# CMD ["npm", "run", "start:dev"]
 
 ###########################################################################
 ###########################################################################

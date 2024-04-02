@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "argocd.labels" . | nindent 4 }}
 spec:
-  replicas: 5
+  replicas: {{ .Values.replicaCount }}
   strategy:
     canary:
       canaryService: {{ include "argocd.fullname" . }}-canary
@@ -13,14 +13,24 @@ spec:
       trafficRouting:
         istio:
           virtualServices:
-          - name: {{ include "argocd.fullname" . }} # At least one virtualService is required
-      steps:      
-      - setWeight: 20
-      - pause: {}
+          - name: {{ include "argocd.fullname" . }}          
+    {{- if .Values.rollout.steps }}      
+    {{- with .Values.rollout.steps }}      
+      steps:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- else }}
+      steps:
       - setWeight: 50
-      - pause: {}
+      - pause: {duration: 1m}
+      - analysis:
+          templates:
+            - templateName: {{ include "argocd.fullname" . }}
+          args:
+          - name: service-name
+            value: {{ include "argocd.fullname" . }}-canary.default.svc.cluster.local
       - setWeight: 100
-      - pause: {}
+    {{- end }}
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -32,31 +42,23 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - name: http
-          containerPort: 3000
+          containerPort: {{ .Values.service.port }}
           protocol: TCP
         livenessProbe:
-          httpGet:
-            path: /
-            port: http
+          {{- toYaml .Values.livenessProbe | nindent 10 }}
         readinessProbe:
-          httpGet:
-            path: /
-            port: http          
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
         resources:
-{{ toYaml .Values.resources | indent 12 }}
-    {{- with .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}            
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- with .Values.volumeMounts }}
+        volumeMounts:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+
+           
