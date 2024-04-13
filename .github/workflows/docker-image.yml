@@ -54,7 +54,7 @@ jobs:
     
     - name: update image tag
       run: |
-        sed -i 's/tag: \"[0-9a-z]*\"$/tag: \"${{github.run_number}}\"/g' ${{ github.workspace }}/helmchart/values.yaml        
+        sed -i 's/tag: \"[0-9a-z]*\"$/tag: \"${{github.run_number}}\"/g' ${{ github.workspace }}/helm/app/values.yaml        
         cat ${{ github.workspace }}/helm/app/values.yaml
 
 
