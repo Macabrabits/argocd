@@ -1,0 +1,1 @@
+helm delete argo-rollouts -n argo-rollouts

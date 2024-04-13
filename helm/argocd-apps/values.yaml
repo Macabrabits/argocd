@@ -1,0 +1,15 @@
+applications: 
+  argocd:
+    project: default
+    source:
+      repoURL: 'git@github.com:Macabrabits/argocd.git'
+      path: helm/app
+      targetRevision: HEAD
+    destination:
+      server: 'https://kubernetes.default.svc'
+      namespace: default
+    syncPolicy:
+      automated: {}
+
+
+

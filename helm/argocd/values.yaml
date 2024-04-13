@@ -1,0 +1,35 @@
+redis-ha:
+  enabled: false
+
+dex:
+  # -- Enable dex
+  enabled: false  
+
+redis:
+  # -- Enable redis
+  enabled: true  
+
+
+configs:
+  params:
+    server.insecure: true #development environment purpuses
+  repositories:
+    argocd:
+      url: git@github.com:Macabrabits/argocd.git
+      name: argocd
+      type: git
+    # istio-helm-repo:
+    #   url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
+    #   name: istio.io
+    #   type: helm
+    # private-helm-repo:
+    #   url: https://my-private-chart-repo.internal
+    #   name: private-repo
+    #   type: helm
+    #   password: my-password
+    #   username: my-username
+    # private-repo:
+    #   url: https://github.com/argoproj/private-repo    
+
+
+

@@ -1,0 +1,1 @@
+helm delete argocd-apps -n argocd
