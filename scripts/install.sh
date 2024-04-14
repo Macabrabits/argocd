@@ -8,8 +8,13 @@ cd helm/argocd && ./install.sh && cd $ORIGIN
 cd helm/argocd-apps && ./install.sh && cd $ORIGIN
 cd helm/argo-rollouts && ./install.sh && cd $ORIGIN
 cd helm/istio && ./install.sh && cd $ORIGIN
-./createrepocreds.sh
+scripts/createrepocreds.sh
 
 kubectl apply -f k8s/addons/prometheus.yaml
 kubectl apply -f k8s/addons/grafana.yaml
-     
+
+ARGOCD_PASSWORD=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+
+echo ' '
+echo USERNAME: admin
+echo PASSWORD: $ARGOCD_PASSWORD
