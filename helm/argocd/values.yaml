@@ -13,11 +13,11 @@ redis:
 configs:
   params:
     server.insecure: true #development environment purpuses
-  repositories:
-    argocd:
-      url: git@github.com:Macabrabits/argocd.git
-      name: argocd
-      type: git
+  repositories: {}
+    # argocd:
+    #   url: git@github.com:Macabrabits/argocd.git
+    #   name: argocd
+    #   type: git
     # istio-helm-repo:
     #   url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
     #   name: istio.io
